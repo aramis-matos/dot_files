@@ -14,11 +14,14 @@ import System.Exit
 import System.Process (spawnProcess)
 import XMonad
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers 
+import XMonad.Hooks.ManageHelpers
+import XMonad.Layout.NoBorders
+import XMonad.Layout.Spacing
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run
-import XMonad.Layout.NoBorders
 import XMonad.Util.SpawnOnce
+import XMonad.Layout.Gaps
+import XMonad.Layout.NoBorders
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
@@ -35,7 +38,7 @@ myClickJustFocuses = False
 
 -- Width of the window border in pixels.
 --
-myBorderWidth = 10
+myBorderWidth = 0
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -57,9 +60,9 @@ myWorkspaces = ["1", "2", "3"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor = "#dddddd"
+myNormalBorderColor = "#272727"
 
-myFocusedBorderColor = "#BF6E9F"
+myFocusedBorderColor = "#000000"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -71,7 +74,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       -- launches nemo
       ((modm .|. shiftMask, xK_n), spawn "nemo"),
       -- launce pulsemixer
-      ((modm .|. shiftMask, xK_m), spawn "terminator -e 'pulsemixer'"),
+      ((modm .|. shiftMask, xK_m), spawn "terminator -e 'pulsemixer' &"),
       -- launches VS code
       ((modm, xK_c), spawn "code"),
       -- launches Firefox
@@ -89,11 +92,13 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       -- mute volume
       ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle"),
       -- launch dmenu
-      ((modm, xK_p), spawn "dmenu_run"),
+      ((modm, xK_p), spawn "rofi -show run -theme \"Arc-Dark\""),
       -- launch gmrun
       ((modm .|. shiftMask, xK_p), spawn "gmrun"),
       -- close focused window
       ((modm .|. shiftMask, xK_c), kill),
+      -- toggle gaps
+      ((modm .|. shiftMask, xK_g), sendMessage ToggleGaps),
       -- Rotate through the available layout algorithms
       ((modm, xK_space), sendMessage NextLayout),
       --  Reset the layouts on the current workspace to default
@@ -122,6 +127,8 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       ((modm, xK_t), withFocused $ windows . W.sink),
       -- Increment the number of windows in the master area
       ((modm, xK_comma), sendMessage (IncMasterN 1)),
+      -- toggle xmobar
+      ((mod4Mask .|. shiftMask, xK_f), sendMessage ToggleStruts),
       -- Deincrement the number of windows in the master area
       ((modm, xK_period), sendMessage (IncMasterN (-1))),
       -- Toggle the status bar gap
@@ -193,7 +200,7 @@ myMouseBindings XConfig {XMonad.modMask = modm} =
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (tiled ||| Mirror tiled ||| Full)
+myLayout =   avoidStruts  (tiled ||| Mirror tiled ||| noBorders Full)
   where
     -- default tiling algorithm partitions the screen into two panes
     tiled = Tall nmaster delta ratio
@@ -262,19 +269,17 @@ myLogHook = return ()
 myStartupHook = do
   spawnOnce "nitrogen --restore &"
   spawnOnce "picom --experimental-backends &"
-  spawnOnce "xrandr --output HDMI-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --off --output DP-3 --off --output DP-4 --primary --mode 2560x1440 --rate 165.00 --pos 1920x0 --rotate normal --output DP-5 --off &"
+  spawnOnce "xrandr --output HDMI-0 --rate 60.00 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --rate 165.00 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off"
+  spawnOnce "pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo"
+  spawnOnce "trayer --edge top --align right --SetDockType true --expand true --width 10 --transparent true --alpha 0 --tint 0xd3d3d3 --height 19 &"
 
--- spawnOnce "trayer --edge top --align right --SetDockType true --expand true --width 10 --transparent true --alpha 0 --tint 0xffc0cb --height 19 &"
--- spawnOnce "flameshot &"
-
-------------------------------------------------------------------------
--- Now run xmonad with all the defaults we set up.
-
--- Run xmonad with the settings you specify. No need to modify this.
+-- spawnOnce "flameshot &"pactl set-default-sink 2. No need to modify this.
 --
 main = do
   xmproc0 <- spawnPipe "xmobar -x 0 ~/.config/xmobar/xmobarrc.hs"
   xmproc1 <- spawnPipe "xmobar -x 1 ~/.config/xmobar/xmobarrc.hs"
+  xmproc2 <- spawnPipe "fcitx -d &"
+  xmproc3 <- spawnPipe "pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo"
   xmonad $ docks defaults
 
 -- A structure containing your configuration settings, overriding
@@ -298,7 +303,7 @@ defaults =
       keys = myKeys,
       mouseBindings = myMouseBindings,
       -- hooks, layouts myLayout
-      layoutHook = smartBorders . avoidStruts $ layoutHook def,
+      layoutHook = gaps [(D,5), (R,5), (L,5), (U,5)] . spacingRaw True (Border 0 0 0 0) True (Border 3 3 3 3) True . smartBorders . avoidStruts $ layoutHook def,
       manageHook = myManageHook,
       handleEventHook = myEventHook,
       logHook = myLogHook,
