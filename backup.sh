@@ -1,5 +1,7 @@
 #! /bin/bash
 
+echo "guh"
+
 cp -r ~/.config/awesome .
 cp ~/.config/picom.conf .
 cp ~/.zshenv .
