@@ -7,6 +7,6 @@ cp ~/.zshrc .
 cp ~/.config/starship.toml .
 
 if git pull; then 
-git commit -a "$1"
+git commit -a -m "$1"
 git push
 fi 
