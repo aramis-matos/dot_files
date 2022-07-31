@@ -109,7 +109,8 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 current_audio = awful.widget.watch('bash -c "~/.config/awesome/format_sink_names.sh"', 0.1)
-current_volume = awful.widget.watch('bash -c "/home/ccyanide/.config/awesome/get_vol.sh"',0.1)
+current_volume = awful.widget.watch('bash -c "~/.config/awesome/get_vol.sh"',0.1)
+is_compositor = awful.widget.watch('bash -c "~/.config/awesome/is_comp.sh"',1)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -213,6 +214,7 @@ awful.screen.connect_for_each_screen(function(s)
             mytextclock,
             current_audio,
             current_volume,
+            is_compositor,
             s.mylayoutbox,
         },
     }
@@ -344,6 +346,8 @@ globalkeys = gears.table.join(
 
     awful.key({modkey, "Shift"}, "0", function() awful.spawn.with_shell("~/./.config/awesome/switch_sink.sh") end, {description = "switch sinks", group="system"}),
 
+
+    awful.key({modkey}, "F11", function() awful.spawn.with_shell("~/./.config/awesome/toggle_comp.sh") end, {description = "open picom", group="system"}),
 
 
     awful.key({ modkey }, "x",
@@ -599,6 +603,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 awful.spawn.with_shell("fcitx -d &")
 awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo")
-awful.spawn.with_shell("picom --experimental-backends &")
+-- awful.spawn.with_shell("picom --experimental-backends &")
 awful.spawn.with_shell("xrandr --output HDMI-0 --rate 60.00 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --rate 165.00 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off")
 awful.spawn.with_shell("sleep 0.5s && nitrogen --restore &")
+awful.spawn.with_shell("/etc/X11/xorg.conf")
