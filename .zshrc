@@ -29,7 +29,7 @@ alias doom="./.emacs.d/bin/doom"
 alias wd="wol 44:8A:5B:CE:75:8A"
 alias vim="nvim"
 alias wd="wol 44:8A:5B:CE:75:8A"
-
+alias bt="bashtop"
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
