@@ -1,17 +1,14 @@
 import sys
 import re
+import sys
 
 
 curr = sys.argv[1]
-file_read = sys.argv[2]
-sinks_name = re.findall(r'Sink #\d+(\n\t.+){2}', file_read)
-sinks_desc = re.findall(r"Sink #\d+(\n\t.+){3}",file_read)
-sinks_desc = [re.findall(": .+",x)[0][2:].split(" ")[0][:5] for x in sinks_desc]
-sinks_name = [re.findall(": .+",x)[0][2:].split(" ")[0] for x in sinks_name]
-for sink in zip(sinks_name,sinks_desc):
+contents = sys.argv[2]
+name_matches = [x[:len(x)-2].split(" ")[1]
+                for x in re.findall(r"Sink #(.*[\n\t]*){3}", contents)]
+desc_matches = [x[:len(x)-2].split(" ")[1][:5]
+                for x in re.findall(r"Sink #(.*[\n\t]*){4}", contents)]
+for sink in zip(name_matches, desc_matches):
     if sink[0] == curr:
-        print(f"|{sink[1]}| ")
-
-
-
-
+        print(sink[1], "")

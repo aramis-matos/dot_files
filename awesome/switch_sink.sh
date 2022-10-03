@@ -1,9 +1,11 @@
-#! /bin/bash
+#! /usr/bin/zsh
 
-sinks=$(pactl list short | awk '/alsa.output/ {print $2}' | awk '$0 !~ /monitor$/') 
+sinks=$(pactl list sinks) 
 
-curr=$(pactl get-default-sink)
+curr=$(pactl info | sed -En 's/Default Sink: (.*)/\1/p')
 
-new_sink=$(python ~/.config/awesome/switch_sink.py "$sinks" "$curr")
+new_sink=$(python3 ~/.config/awesome/switch_sinks.py "$curr" "$sinks")
+
+echo $new_sink
 
 pactl set-default-sink "$new_sink"

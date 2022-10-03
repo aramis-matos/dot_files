@@ -108,8 +108,9 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-current_audio = awful.widget.watch('bash -c "~/.config/awesome/format_sink_names.sh"', 0.1)
-current_volume = awful.widget.watch('bash -c "~/.config/awesome/get_vol.sh"', 0.1)
+current_audio = awful.widget.watch('zsh -c "~/.config/awesome/format_sink_names.sh"', 0.1)
+current_volume = awful.widget.watch('zsh -c "~/.config/awesome/get_vol.sh"', 0.1)
+battery = awful.widget.watch('zsh -c "~/.config/awesome/battery.sh"',0.1)
 
 
 -- Create a wibox for each screen and add it
@@ -214,6 +215,7 @@ awful.screen.connect_for_each_screen(function(s)
             mytextclock,
             current_audio,
             current_volume,
+            battery,
             s.mylayoutbox,
         },
     }
@@ -623,3 +625,6 @@ awful.spawn.with_shell("xrandr --output HDMI-0 --rate 60.00 --mode 1920x1080 --p
 awful.spawn.with_shell("sleep 0.5s && nitrogen --restore &")
 awful.spawn.with_shell("/etc/X11/xorg.conf")
 awful.spawn.with_shell("~/./.config/awesome/auto_toggle_comp.sh &")
+awful.spawn.with_shell("nm-applet &")
+awful.spawn.with_shell("blueberry-tray &")
+
