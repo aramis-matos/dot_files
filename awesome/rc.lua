@@ -215,7 +215,7 @@ awful.screen.connect_for_each_screen(function(s)
             mytextclock,
             current_audio,
             current_volume,
-            battery,
+            -- battery,
             s.mylayoutbox,
         },
     }
@@ -317,7 +317,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "r", function() awful.screen.focused().mypromptbox:run() end,
         { description = "run prompt", group = "launcher" }),
 
-    awful.key({ modkey, "Shift" }, "n", function() awful.spawn("nemo") end, { description = "open nemo", group = "apps" })
+    awful.key({ modkey, "Shift" }, "n", function() awful.spawn("nautilus") end, { description = "open nautilus", group = "apps" })
     ,
 
     awful.key({ modkey, "Shift" }, "m", function() awful.spawn(terminal .. "-e pulsemixer") end,
@@ -325,16 +325,19 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey }, "c", function() awful.spawn("code") end, { description = "open code", group = "apps" }),
 
-    awful.key({ modkey }, "f", function() awful.spawn("firefox") end, { description = "open nemo", group = "apps" }),
+    awful.key({ modkey }, "f", function() awful.spawn("firefox") end, { description = "open firefox", group = "apps" }),
 
-    awful.key({ modkey, "Shift" }, "s", function() awful.spawn.with_shell("spectacle -r -c -b") end,
+    awful.key({ modkey, "Shift" }, "s", function() awful.spawn.with_shell("~/./.config/awesome/launch_scrot.sh s `-l style=solid,width=4,color='#',opacity=0,mode=edge`") end,
         { description = "screenshot area", group = "apps" }),
 
-    awful.key({ "Mod1" }, "Print", function() awful.spawn.with_shell("spectacle -m -c -b") end,
+    awful.key({modkey, "Shift"}, "Print", function() awful.spawn.with_shell("~/./.config/awesome/launch_scrot.sh u") end,
         { description = "screenshot monitor", group = "apps" }),
 
-    awful.key({}, "Print", function() awful.spawn.with_shell("spectacle -f -c -b") end,
+    awful.key({modkey}, "Print", function() awful.spawn.with_shell("~/./.config/awesome/launch_scrot.sh m") end,
         { description = "screenshot all monitors", group = "apps" }),
+
+    awful.key({modkey},"`", function() awful.spawn.with_shell("xrandr --output HDMI-0 --off --output DP-0 --off --output DP-1 --off --output DP-2 --rate 165.00 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off") end,
+        { description = "Turn off aux monitor(s)", group = "apps" }),
 
     awful.key({ modkey }, "p",
         function() awful.spawn("rofi -show run -theme \"Arc-Dark\" -font \"Hasklug Nerd Font 16\"") end,
@@ -343,7 +346,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey, "Shift" }, "o", function() awful.spawn("shutdown now") end,
         { description = "shutdown system", group = "system" }),
 
-    awful.key({ modkey, "Shift" }, "p", function() awful.spawn("reboot") end,
+    awful.key({ modkey, "Shift" }, "p", function() awful.spawn.with_shell("./usr/sbin/reboot") end,
         { description = "reboot system", group = "system" }),
 
     awful.key({ modkey, "Shift" }, "l", function() awful.spawn("pulsemixer") end,
@@ -362,8 +365,11 @@ globalkeys = gears.table.join(
         { description = "switch sinks", group = "system" }),
 
 
-    awful.key({ modkey }, "F11", function() awful.spawn.with_shell("~/./.config/awesome/toggle_comp.sh") end,
-        { description = "open picom", group = "system" }),
+    awful.key({ modkey }, "F11", function() awful.spawn.with_shell("obs-studio --startrecording --minimize-to-tray &") end,
+        { description = "OBS start recording", group = "system" }),
+
+    awful.key({ modkey }, "F12", function() awful.spawn.with_shell("obs-cli recording stop") end,
+        { description = "OBS start recording", group = "system" }),
 
 
     awful.key({ modkey }, "x",
@@ -618,13 +624,13 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- autostart
 
-awful.spawn.with_shell("fcitx -d &")
+awful.spawn.with_shell("fcitx5 -d &")
 awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo")
-awful.spawn.with_shell("picom --experimental-backends &")
+-- awful.spawn.with_shell("picom &")
 awful.spawn.with_shell("xrandr --output HDMI-0 --rate 60.00 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --rate 165.00 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off")
 awful.spawn.with_shell("sleep 0.5s && nitrogen --restore &")
 awful.spawn.with_shell("/etc/X11/xorg.conf")
-awful.spawn.with_shell("~/./.config/awesome/auto_toggle_comp.sh &")
+-- awful.spawn.with_shell("~/./.config/awesome/auto_toggle_comp")
 awful.spawn.with_shell("nm-applet &")
 awful.spawn.with_shell("blueberry-tray &")
 
