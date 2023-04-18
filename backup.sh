@@ -3,7 +3,7 @@
 echo "guh"
 
 cp -r ~/.config/awesome .
-cp -r ~/fish .
+cp -r ~/.config/fish .
 
 if git pull; then 
 git commit -a -m "$1"
