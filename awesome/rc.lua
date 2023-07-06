@@ -350,8 +350,8 @@ globalkeys = gears.table.join(
 		awful.spawn.with_shell("emacs")
 	end, { description = "open emacs", group = "apps" }),
 	awful.key({ modkey }, "f", function()
-		awful.spawn("firefox")
-	end, { description = "open firefox", group = "apps" }),
+		awful.spawn("brave-browser")
+	end, { description = "open brave", group = "apps" }),
 	awful.key({ modkey, "Shift" }, "s", function()
 		awful.spawn.with_shell(
 			"~/./.config/awesome/launch_scrot.sh s `-l style=solid,width=4,color='#',opacity=0,mode=edge`"
@@ -562,7 +562,7 @@ awful.rules.rules = {
 			role = {
 				"AlarmWindow", -- Thunderbird's calendar.
 				"ConfigManager", -- Thunderbird's about:config.
-				"pop-up",    -- e.g. Google Chrome's (detached) Developer Tools.
+				"pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
 			},
 		},
 		properties = { floating = true },
@@ -665,3 +665,4 @@ awful.spawn.with_shell("nm-applet &")
 awful.spawn.with_shell("blueberry-tray &")
 awful.spawn.with_shell("/./usr/bin/lxqt-policykit-agent &")
 awful.spawn.with_shell("/usr/bin/emacs -daemon")
+awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_09_00.4.analog-stereo")
