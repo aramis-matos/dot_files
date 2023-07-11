@@ -54,7 +54,7 @@ end
 beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "terminator "
+terminal = "terminator"
 editor = "nvim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -344,13 +344,13 @@ globalkeys = gears.table.join(
 	end, { description = "open nautilus", group = "apps" }),
 
 	awful.key({ modkey, "Shift" }, "m", function()
-		awful.spawn(terminal .. "-e pulsemixer")
+		awful.spawn(terminal .. " -e pulsemixer")
 	end, { description = "open pulsemixer", group = "apps" }),
 	awful.key({ modkey }, "c", function()
-		awful.spawn.with_shell("emacs")
-	end, { description = "open emacs", group = "apps" }),
+		awful.spawn.with_shell("code")
+	end, { description = "open code", group = "apps" }),
 	awful.key({ modkey }, "f", function()
-		awful.spawn("brave-browser")
+		awful.spawn("brave-beta")
 	end, { description = "open brave", group = "apps" }),
 	awful.key({ modkey, "Shift" }, "s", function()
 		awful.spawn.with_shell(
@@ -370,7 +370,7 @@ globalkeys = gears.table.join(
 	end, { description = "Turn off aux monitor(s)", group = "apps" }),
 
 	awful.key({ modkey }, "p", function()
-		awful.spawn('rofi -show drun -theme "Arc-Dark" -font "Hasklug Nerd Font 16"')
+		awful.spawn('rofi -show drun -theme "Arc-Dark" -font "Hasklug Nerd Font Propo Heavy 16"')
 	end, { description = "open rofi", group = "apps" }),
 	awful.key({ modkey, "Shift" }, "o", function()
 		awful.spawn("shutdown now")
@@ -379,7 +379,7 @@ globalkeys = gears.table.join(
 		awful.spawn.with_shell("reboot")
 	end, { description = "reboot system", group = "system" }),
 	awful.key({ modkey, "Shift" }, "l", function()
-		awful.spawn("pulsemixer")
+		awful.spawn(terminal .. " pulsemixer")
 	end, { description = "open pulsemixer", group = "apps" }),
 	awful.key({ modkey }, "=", function()
 		awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
@@ -388,7 +388,7 @@ globalkeys = gears.table.join(
 		awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 	end, { description = "lower volume", group = "system" }),
 	awful.key({ modkey }, "0", function()
-		awful.spawn("playerctl play-pause -a")
+		awful.spawn.with_shell("~/./.config/awesome/playpause.sh")
 	end, { description = "play-pause all players", group = "system" }),
 	awful.key({ modkey, "Shift" }, "0", function()
 		awful.spawn.with_shell("~/./.config/awesome/switch_sink.sh")
@@ -562,7 +562,7 @@ awful.rules.rules = {
 			role = {
 				"AlarmWindow", -- Thunderbird's calendar.
 				"ConfigManager", -- Thunderbird's about:config.
-				"pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+				"pop-up",    -- e.g. Google Chrome's (detached) Developer Tools.
 			},
 		},
 		properties = { floating = true },
@@ -664,5 +664,4 @@ awful.spawn.with_shell("/etc/X11/xorg.conf")
 awful.spawn.with_shell("nm-applet &")
 awful.spawn.with_shell("blueberry-tray &")
 awful.spawn.with_shell("/./usr/bin/lxqt-policykit-agent &")
-awful.spawn.with_shell("/usr/bin/emacs -daemon")
-awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_09_00.4.analog-stereo")
+-- awful.spawn.with_shell("/usr/bin/emacs -daemon")
