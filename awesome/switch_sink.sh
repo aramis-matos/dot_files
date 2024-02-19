@@ -1,11 +1,11 @@
-#! /usr/bin/zsh
+#! /usr/bin/bash
 
-sinks=$(pactl list sinks) 
+sinks=$(pactl list sinks)
 
-curr=$(pactl info | sed -En 's/Default Sink: (.*)/\1/p')
+curr=$(pactl get-default-sink)
 
-new_sink=$(python3 ~/.config/awesome/switch_sinks.py "$curr" "$sinks")
+new_sink=$(python3 ~/.config/awesome/switch_sink.py "$curr" "$sinks")
 
-echo $new_sink
+echo "$new_sink"
 
 pactl set-default-sink "$new_sink"

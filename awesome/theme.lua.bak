@@ -11,16 +11,16 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font = "Hasklug Nerd Font 13"
+theme.font = "Hasklug Nerd Font Propo Heavy 13"
 
-theme.bg_normal = "#020202"
-theme.bg_focus = "#fdfdfd"
+theme.bg_normal = "#ffffff"
+theme.bg_focus = "#C65050"
 theme.bg_urgent = "#ff0000"
 theme.bg_minimize = "#444444"
-theme.bg_systray = "#3a454b"
+theme.bg_systray = "#C65050" --theme.bg_normal
 
-theme.fg_normal = "#3c3c3c"
-theme.fg_focus = "#000000"
+theme.fg_normal = "#000000"
+theme.fg_focus = "#8C8B8C"
 theme.fg_urgent = "#ffffff"
 theme.fg_minimize = "#ffffff"
 
@@ -120,14 +120,6 @@ theme.awesome_icon = theme_assets.awesome_icon(theme.menu_height, theme.bg_focus
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
 theme.icon_theme = nil
 
-local bar1 = {}
-theme.bar1 = bar1
-theme.bar1.fg_normal = "#3c3c3c"
-theme.bar1.bg_normal = "#020202"
-local bar2 = {}
-theme.bar2 = bar2
-theme.bar2.fg_normal = "#c3c3c3"
-theme.bar2.bg_normal = "#dbd7f2"
 return theme
 
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80

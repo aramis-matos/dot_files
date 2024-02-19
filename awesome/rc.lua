@@ -14,6 +14,7 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+local theme_lua = require("theme")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -51,7 +52,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("~/.config/awesome/theme.lua")
+beautiful.init("~/.config/awesome/theme1.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "terminator"
@@ -123,9 +124,10 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-current_audio = awful.widget.watch('zsh -c "~/.config/awesome/format_sink_names.sh"', 0.1)
-current_volume = awful.widget.watch('zsh -c "~/.config/awesome/get_vol.sh"', 0.1)
-battery = awful.widget.watch('zsh -c "~/.config/awesome/battery.sh"', 0.1)
+current_audio = awful.widget.watch('fish -c "~/.config/awesome/format_sink_names.fish"', 0.01)
+current_volume = awful.widget.watch('fish -c "~/.config/awesome/get_vol.fish"', 0.01)
+battery = awful.widget.watch('fish -c "~/.config/awesome/battery.sh"', 0.01)
+gpu_usage = awful.widget.watch('fish -c "~/.config/awesome/gpu_usage.py"', 0.01)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -185,6 +187,8 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local wibar_1 = require("theme1")
+local wibar_2 = require("theme2")
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
 	set_wallpaper(s)
@@ -221,7 +225,13 @@ awful.screen.connect_for_each_screen(function(s)
 	-- Create a tasklist widget
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", screen = s })
+	if s.index == 1 then
+		s.mywibox =
+				awful.wibar({ position = "top", screen = s, bg = wibar_1.bg_normal .. "80", fg = wibar_1.fg_normal })
+	else
+		s.mywibox =
+				awful.wibar({ position = "top", screen = s, bg = wibar_2.bg_normal .. "80", fg = wibar_2.fg_normal })
+	end
 
 	-- Add widgets to the wibox
 	s.mywibox:setup({
@@ -236,9 +246,10 @@ awful.screen.connect_for_each_screen(function(s)
 		s.mytasklist, -- Middle widget
 		{
 			-- Right widgets
+			gpu_usage,
 			layout = wibox.layout.fixed.horizontal,
-			mykeyboardlayout,
-			wibox.widget.systray(),
+			-- mykeyboardlayout,
+			-- wibox.widget.systray(),
 			mytextclock,
 			current_audio,
 			current_volume,
@@ -343,14 +354,15 @@ globalkeys = gears.table.join(
 		awful.spawn("nautilus")
 	end, { description = "open nautilus", group = "apps" }),
 
-	awful.key({ modkey, "Shift" }, "m", function()
-		awful.spawn(terminal .. " -e pulsemixer")
-	end, { description = "open pulsemixer", group = "apps" }),
+	--	awful.key({ modkey, "Shift" }, "m", function()
+	--	awful.spawn(terminal .. " -e pulsemixer")
+	--
+	--      end, { description = "open pulsemixer", group = "apps" }),
 	awful.key({ modkey }, "c", function()
-		awful.spawn.with_shell("code")
-	end, { description = "open code", group = "apps" }),
+		awful.spawn(editor_cmd)
+	end, { description = "open nvim", group = "apps" }),
 	awful.key({ modkey }, "f", function()
-		awful.spawn("brave-beta")
+		awful.spawn("brave-browser")
 	end, { description = "open brave", group = "apps" }),
 	awful.key({ modkey, "Shift" }, "s", function()
 		awful.spawn.with_shell(
@@ -370,13 +382,16 @@ globalkeys = gears.table.join(
 	end, { description = "Turn off aux monitor(s)", group = "apps" }),
 
 	awful.key({ modkey }, "p", function()
-		awful.spawn('rofi -show drun -theme "Arc-Dark" -font "Hasklug Nerd Font Propo Heavy 16"')
+		awful.spawn('rofi -show drun -theme "Arc-Dark" -font "Hasklug Nerd Font Heavy 16"')
+	end, { description = "open rofi", group = "apps" }),
+	awful.key({ modkey }, "F10", function()
+		awful.spawn("pkill picom")
 	end, { description = "open rofi", group = "apps" }),
 	awful.key({ modkey, "Shift" }, "o", function()
-		awful.spawn("shutdown now")
+		awful.spawn.with_shell("systemctl poweroff")
 	end, { description = "shutdown system", group = "system" }),
 	awful.key({ modkey, "Shift" }, "p", function()
-		awful.spawn.with_shell("reboot")
+		awful.spawn.with_shell("systemctl reboot")
 	end, { description = "reboot system", group = "system" }),
 	awful.key({ modkey, "Shift" }, "l", function()
 		awful.spawn(terminal .. " pulsemixer")
@@ -644,24 +659,27 @@ end)
 
 client.connect_signal("focus", function(c)
 	c.border_color = beautiful.border_focus
+	c.opacity = 1
 end)
 client.connect_signal("unfocus", function(c)
 	c.border_color = beautiful.border_normal
+	c.opacity = 0.9
 end)
 -- }}}
 
 -- autostart
 
 awful.spawn.with_shell("fcitx5 -d &")
-awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo")
--- awful.spawn.with_shell("picom &")
+-- awful.spawn.with_shell("pactl set-default-sink alsa_output.pci-0000_2d_00.4.analog-stereo")
 awful.spawn.with_shell(
-	"xrandr --output HDMI-0 --rate 60.00 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --rate 165.00 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off"
+	"xrandr --output DisplayPort-0 --mode 2560x1440 --pos 1920x0 --rotate normal --rate 144.00 --output DisplayPort-1 --off --output DisplayPort-2 --off --output HDMI-A-0 --mode 1920x1080 --pos 0x0 --rotate normal --rate 60.00 "
 )
 awful.spawn.with_shell("sleep 0.5s && nitrogen --restore &")
 awful.spawn.with_shell("/etc/X11/xorg.conf")
 -- awful.spawn.with_shell("~/./.config/awesome/auto_toggle_comp")
 awful.spawn.with_shell("nm-applet &")
 awful.spawn.with_shell("blueberry-tray &")
-awful.spawn.with_shell("/./usr/bin/lxqt-policykit-agent &")
--- awful.spawn.with_shell("/usr/bin/emacs -daemon")
+awful.spawn.with_shell("~/./.config/awesome/color_avg.py")
+awful.spawn.with_shell("picom --daemon --blur-method box --blur-size 13 --experimental-backends --backend glx")
+awful.spawn.with_shell("steam &")
+
